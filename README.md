@@ -17,4 +17,4 @@ This project is completely self-contained within a single file:
 
 1. Simply double-click [index.html](file:///c:/Users/Sam/Documents/antigravity/wonderful-borg/index.html) or open it in any modern web browser (Chrome, Firefox, Edge, Safari, etc.).
 2. Click the **Start** button to begin the 60-second countdown.
-3. Use the **Pause** button to halt the timer temporarily, or **Reset** to return to 60 seconds.
+3. Use the **Pause** button to halt the timer temporarily, or **Reset** to return to 60 seconds
