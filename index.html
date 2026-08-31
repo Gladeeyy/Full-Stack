@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple 60-Second Countdown Timer</title>
+    <title>Sphere Volume Calculator</title>
     <style>
         /* General page layout */
         body {
@@ -16,181 +16,152 @@
             margin: 0;
         }
 
-        /* Card layout for the timer */
-        .timer-card {
+        /* Card layout */
+        .calculator-card {
             background-color: #ffffff;
-            padding: 40px;
+            padding: 35px 30px;
             border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            text-align: center;
             width: 320px;
         }
 
         /* Title style */
         h1 {
-            margin: 0 0 10px 0;
+            margin: 0 0 5px 0;
             color: #1f2937;
-            font-size: 24px;
+            font-size: 22px;
+            text-align: center;
         }
 
         p {
             margin: 0 0 20px 0;
             color: #6b7280;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        /* Input field container */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
             font-size: 14px;
+            font-weight: 600;
+            color: #4b5563;
         }
 
-        /* Prominent countdown display */
-        .countdown-display {
-            font-size: 96px;
-            font-weight: bold;
-            color: #2563eb;
-            margin: 20px 0;
-            font-family: monospace; /* Keeps characters aligned */
-            transition: color 0.3s ease;
+        input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
         }
 
-        /* Layout for controls */
-        .controls {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
+        input:focus {
+            border-color: #2563eb;
         }
 
-        /* Button styles */
+        /* Styling for readonly output box */
+        input[readonly] {
+            background-color: #f9fafb;
+            color: #374151;
+            font-weight: 600;
+        }
+
+        /* Button style */
         button {
-            padding: 12px 20px;
+            width: 100%;
+            padding: 12px;
             font-size: 16px;
             font-weight: 600;
+            background-color: #2563eb;
+            color: #ffffff;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s ease;
-            flex: 1;
+            transition: background-color 0.2s;
         }
 
-        .btn-start {
-            background-color: #10b981;
-            color: #ffffff;
+        button:hover {
+            background-color: #1d4ed8;
         }
 
-        .btn-start:hover {
-            background-color: #059669;
-        }
-
-        .btn-pause {
-            background-color: #f59e0b;
-            color: #ffffff;
-        }
-
-        .btn-pause:hover {
-            background-color: #d97706;
-        }
-
-        .btn-reset {
-            background-color: #ef4444;
-            color: #ffffff;
-        }
-
-        .btn-reset:hover {
-            background-color: #dc2626;
-        }
-
-        /* Disabled state styling */
-        button:disabled {
-            background-color: #e5e7eb;
-            color: #9ca3af;
-            cursor: not-allowed;
+        /* Error message style */
+        .error-message {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="timer-card">
-        <h1>Countdown Timer</h1>
-        <p>Basic 60-Second Countdown</p>
+    <div class="calculator-card">
+        <h1>Volume of a Sphere</h1>
+        <p>Enter the radius to calculate the volume</p>
         
-        <!-- Large timer output -->
-        <div class="countdown-display" id="timer">60</div>
-        
-        <!-- Control buttons -->
-        <div class="controls">
-            <button class="btn-start" id="startBtn">Start</button>
-            <button class="btn-pause" id="pauseBtn" disabled>Pause</button>
-            <button class="btn-reset" id="resetBtn">Reset</button>
+        <!-- Input 1: Radius -->
+        <div class="input-group">
+            <label for="radius">Radius (r):</label>
+            <input type="number" id="radius" step="any" placeholder="Enter radius" min="0">
+            <div id="error" class="error-message">Please enter a valid positive number</div>
         </div>
+        
+        <!-- Input 2: Output Volume -->
+        <div class="input-group">
+            <label for="volume">Volume (V):</label>
+            <input type="text" id="volume" placeholder="Calculated volume output" readonly>
+        </div>
+        
+        <!-- Calculate Button -->
+        <button id="calculateBtn">Calculate</button>
     </div>
 
     <script>
-        // Track the current time and timer interval ID
-        let timeLeft = 60;
-        let timerInterval = null;
+        // DOM element references
+        const radiusInput = document.getElementById('radius');
+        const volumeInput = document.getElementById('volume');
+        const calculateBtn = document.getElementById('calculateBtn');
+        const errorDiv = document.getElementById('error');
 
-        // Get DOM element references
-        const timerDisplay = document.getElementById('timer');
-        const startBtn = document.getElementById('startBtn');
-        const pauseBtn = document.getElementById('pauseBtn');
-        const resetBtn = document.getElementById('resetBtn');
-
-        // Function to update the text showing on screen
-        function updateDisplay() {
-            timerDisplay.textContent = timeLeft;
-        }
-
-        // Starts or resumes the countdown
-        function startTimer() {
-            if (timerInterval !== null) return; // Prevent starting multiple intervals
-
-            // Toggle button disabled states
-            startBtn.disabled = true;
-            pauseBtn.disabled = false;
-
-            // Start repeating interval every 1000ms (1 second)
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                updateDisplay();
-
-                // Check if time is up
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    timerInterval = null;
-                    startBtn.disabled = true;
-                    pauseBtn.disabled = true;
-                    timerDisplay.textContent = "0";
-                    timerDisplay.style.color = "#ef4444"; // Highlight in red when finished
-                }
-            }, 1000);
-        }
-
-        // Pauses the active countdown
-        function pauseTimer() {
-            if (timerInterval === null) return;
-
-            clearInterval(timerInterval);
-            timerInterval = null;
-
-            // Toggle button states so user can resume
-            startBtn.disabled = false;
-            pauseBtn.disabled = true;
-        }
-
-        // Resets the timer to the starting condition
-        function resetTimer() {
-            clearInterval(timerInterval);
-            timerInterval = null;
-            timeLeft = 60;
+        // Volume calculation handler
+        function calculateVolume() {
+            const radius = parseFloat(radiusInput.value);
             
-            updateDisplay();
-            timerDisplay.style.color = "#2563eb"; // Reset color to standard blue
+            // Check for valid positive numerical input
+            if (isNaN(radius) || radius < 0) {
+                errorDiv.style.display = 'block';
+                volumeInput.value = '';
+                return;
+            }
             
-            // Set buttons back to original state
-            startBtn.disabled = false;
-            pauseBtn.disabled = true;
+            // Hide error message on successful calculation
+            errorDiv.style.display = 'none';
+            
+            // Formula: V = (4/3) * pi * r^3
+            const volume = (4 / 3) * Math.PI * Math.pow(radius, 3);
+            
+            // Output formatted to 4 decimal places
+            volumeInput.value = volume.toFixed(4);
         }
 
-        // Bind events to buttons
-        startBtn.addEventListener('click', startTimer);
-        pauseBtn.addEventListener('click', pauseTimer);
-        resetBtn.addEventListener('click', resetTimer);
+        // Bind event listeners
+        calculateBtn.addEventListener('click', calculateVolume);
+        
+        // Support pressing Enter key in input field
+        radiusInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateVolume();
+            }
+        });
     </script>
 
 </body>
