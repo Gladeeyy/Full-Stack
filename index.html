@@ -2,167 +2,41 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sphere Volume Calculator</title>
     <style>
-        /* General page layout */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f3f4f6;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        /* Card layout */
-        .calculator-card {
-            background-color: #ffffff;
-            padding: 35px 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            width: 320px;
-        }
-
-        /* Title style */
-        h1 {
-            margin: 0 0 5px 0;
-            color: #1f2937;
-            font-size: 22px;
-            text-align: center;
-        }
-
-        p {
-            margin: 0 0 20px 0;
-            color: #6b7280;
-            font-size: 13px;
-            text-align: center;
-        }
-
-        /* Input field container */
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #4b5563;
-        }
-
-        input {
-            width: 100%;
-            padding: 10px 12px;
-            font-size: 15px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            box-sizing: border-box;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        input:focus {
-            border-color: #2563eb;
-        }
-
-        /* Styling for readonly output box */
-        input[readonly] {
-            background-color: #f9fafb;
-            color: #374151;
-            font-weight: 600;
-        }
-
-        /* Button style */
-        button {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            background-color: #2563eb;
-            color: #ffffff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        button:hover {
-            background-color: #1d4ed8;
-        }
-
-        /* Error message style */
-        .error-message {
-            color: #ef4444;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
-        }
+        body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f3f4f6; margin: 0; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 280px; }
+        .group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        input, button { width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { background: #2563eb; color: white; border: none; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #1d4ed8; }
     </style>
 </head>
 <body>
-
-    <div class="calculator-card">
-        <h1>Volume of a Sphere</h1>
-        <p>Enter the radius to calculate the volume</p>
-        
-        <!-- Input 1: Radius -->
-        <div class="input-group">
-            <label for="radius">Radius (r):</label>
-            <input type="number" id="radius" step="any" placeholder="Enter radius" min="0">
-            <div id="error" class="error-message">Please enter a valid positive number</div>
+    <div class="card">
+        <h3 style="margin-top:0; text-align:center;">Sphere Volume Calculator</h3>
+        <div class="group">
+            <label>Radius (r):</label>
+            <input type="number" id="radius" placeholder="Enter radius">
         </div>
-        
-        <!-- Input 2: Output Volume -->
-        <div class="input-group">
-            <label for="volume">Volume (V):</label>
-            <input type="text" id="volume" placeholder="Calculated volume output" readonly>
+        <div class="group">
+            <label>Volume (V):</label>
+            <input type="text" id="volume" readonly>
         </div>
-        
-        <!-- Calculate Button -->
-        <button id="calculateBtn">Calculate</button>
+        <button onclick="calculate()">Calculate</button>
     </div>
 
     <script>
-        // DOM element references
-        const radiusInput = document.getElementById('radius');
-        const volumeInput = document.getElementById('volume');
-        const calculateBtn = document.getElementById('calculateBtn');
-        const errorDiv = document.getElementById('error');
-
-        // Volume calculation handler
-        function calculateVolume() {
-            const radius = parseFloat(radiusInput.value);
-            
-            // Check for valid positive numerical input
-            if (isNaN(radius) || radius < 0) {
-                errorDiv.style.display = 'block';
-                volumeInput.value = '';
-                return;
+        function calculate() {
+            const r = parseFloat(document.getElementById('radius').value);
+            if (r >= 0) {
+                const volume = (4 / 3) * Math.PI * Math.pow(r, 3);
+                document.getElementById('volume').value = volume.toFixed(4);
+            } else {
+                document.getElementById('volume').value = "Invalid input";
             }
-            
-            // Hide error message on successful calculation
-            errorDiv.style.display = 'none';
-            
-            // Formula: V = (4/3) * pi * r^3
-            const volume = (4 / 3) * Math.PI * Math.pow(radius, 3);
-            
-            // Output formatted to 4 decimal places
-            volumeInput.value = volume.toFixed(4);
         }
-
-        // Bind event listeners
-        calculateBtn.addEventListener('click', calculateVolume);
-        
-        // Support pressing Enter key in input field
-        radiusInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                calculateVolume();
-            }
-        });
     </script>
-
 </body>
 </html>
